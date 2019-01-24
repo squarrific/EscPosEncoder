@@ -268,18 +268,42 @@ class EscPosEncoder {
      * @return {object}                  Return the object, for easy chaining commands
      *
      */
-    size(value) {
-        if (value === 'small') {
-            value = 0x01;
-        } else {
-            value = 0x00;
-        }
+    font(value) {
+      const fonts = {
+          'a': 0x00, //normal
+          'b': 0x01, //small
+          'c': 0x02 //most printer not support for this font
+      };
 
-        this._queue([
-            0x1b, 0x4d, value,
-        ]);
+      if (value in fonts) {
+          this._queue([
+              0x1b, 0x4d, fonts[value],
+          ]);
+      } else {
+          throw new Error('Unknown font');
+      }
 
-        return this;
+      return this;
+    }
+
+    mode(value) {
+      const modes = {
+          'font_a': 0x00,
+          'font_b': 0x01,
+          'emphasized': 0x08,
+          'double_height': 0x16,
+          'double_width': 0x32
+      };
+
+      if (value in modes) {
+          this._queue([
+              0x1b, 0x21, modes[value],
+          ]);
+      } else {
+          throw new Error('Unknown modes');
+      }
+
+      return this;
     }
 
    /**
